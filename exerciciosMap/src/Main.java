@@ -1,0 +1,55 @@
+/**exercício focado na implementação da estrutura Map 
+ * enuncioado: 
+ * Na contagem de votos de uma eleição, são gerados vários registros de votação contendo o 
+ * nome do candidato e a quantidade de votos (formato .csv) que ele obteve em uma urna de votação. 
+ * Você deve fazer um programa para ler os registros de votação a partir de um arquivo, e daí gerar 
+ * um relatório consolidado com os totais de cada candidato.
+ * */
+
+
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Scanner;
+
+import entities.Candidate;
+
+public class Main {
+
+	public static void main(String[] args) {
+
+		Locale.setDefault(Locale.US);
+		Scanner le = new Scanner(System.in);
+		
+		System.out.print("Enter file full path: ");
+		String path = le.nextLine();
+		
+		Map<Candidate, Integer> voting = new HashMap<>();
+		
+		try (BufferedReader br = new BufferedReader(new FileReader(path)) ){
+			
+			String line = br.readLine();
+			while(line != null) {
+				String[] lines = line.split(",");
+				String candidate = lines[0].trim();
+				int votes = Integer.parseInt(lines[1].trim());
+				Candidate candidateObj = new Candidate(candidate);
+				voting.compute(candidateObj, (key, value) -> value == null ? votes : value + votes);
+				line = br.readLine();
+			}
+			
+		}
+			catch (IOException e){
+				System.out.println("Erro: "+e.getMessage());
+			}
+		System.out.println("Cnadidates");
+		for(Candidate key:voting.keySet()) {
+			System.out.println(key.getName()+ " : "+voting.get(key));
+		}
+		}
+	}
+
+
